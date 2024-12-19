@@ -31,11 +31,13 @@ namespace CrashKonijn.Goap.Editor
             this.OnSelectionChange();
         }
 
+        // 当组件获得焦点时调用
         private void OnFocus()
         {
             this.OnSelectionChange();
         }
 
+// 当选择的物体发生变化时调用
         private void OnSelectionChange()
         {
             var selectedObject = Selection.activeObject;
@@ -54,21 +56,25 @@ namespace CrashKonijn.Goap.Editor
             this.RenderGraph(graph, obj);
         }
 
+// 获取选定对象的代理类型
         private (IAgentType agentType, Object obj) GetAgentType(Object selectedObject)
         {
             if (selectedObject is AgentTypeScriptable agentTypeScriptable)
             {
-                return (new AgentTypeFactory(GoapConfig.Default).Create(agentTypeScriptable.Create(), false), selectedObject);
+                return (new AgentTypeFactory(GoapConfig.Default).Create(agentTypeScriptable.Create(), false),
+                    selectedObject);
             }
 
             if (selectedObject is CapabilityConfigScriptable capabilityConfigScriptable)
             {
-                return (new AgentTypeFactory(GoapConfig.Default).Create(capabilityConfigScriptable.Create(), false), selectedObject);
+                return (new AgentTypeFactory(GoapConfig.Default).Create(capabilityConfigScriptable.Create(), false),
+                    selectedObject);
             }
 
             if (selectedObject is ScriptableCapabilityFactoryBase capabilityFactoryScriptable)
             {
-                return (new AgentTypeFactory(GoapConfig.Default).Create(capabilityFactoryScriptable.Create(), false), selectedObject);
+                return (new AgentTypeFactory(GoapConfig.Default).Create(capabilityFactoryScriptable.Create(), false),
+                    selectedObject);
             }
 
             if (selectedObject is not GameObject gameObject)
@@ -83,7 +89,8 @@ namespace CrashKonijn.Goap.Editor
             var agentTypeBehaviour = gameObject.GetComponent<AgentTypeBehaviour>();
             if (agentTypeBehaviour != null)
             {
-                return (new AgentTypeFactory(GoapConfig.Default).Create(agentTypeBehaviour.Config.Create(), false), selectedObject);
+                return (new AgentTypeFactory(GoapConfig.Default).Create(agentTypeBehaviour.Config.Create(), false),
+                    selectedObject);
             }
 
             var provider = gameObject.GetComponent<GoapActionProvider>();
@@ -95,13 +102,16 @@ namespace CrashKonijn.Goap.Editor
 
             if (provider.AgentTypeBehaviour == null)
             {
-                Debug.Log("Unable to render graph; No AgentType or AgentTypeBehaviour found on the agent! Please assign one in the inspector or through code in the Awake method.");
+                Debug.Log(
+                    "Unable to render graph; No AgentType or AgentTypeBehaviour found on the agent! Please assign one in the inspector or through code in the Awake method.");
                 return default;
             }
 
-            return (new AgentTypeFactory(GoapConfig.Default).Create(provider.AgentTypeBehaviour.Config.Create(), false), provider);
+            return (new AgentTypeFactory(GoapConfig.Default).Create(provider.AgentTypeBehaviour.Config.Create(), false),
+                provider);
         }
 
+// 渲染图形界面
         private void RenderGraph(IGraph graph, Object selectedObject)
         {
             if (this.graph == graph)
@@ -115,7 +125,8 @@ namespace CrashKonijn.Goap.Editor
 
             this.rootVisualElement.Clear();
 
-            var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>($"{GoapEditorSettings.BasePath}/Styles/GraphViewer.uss");
+            var styleSheet =
+                AssetDatabase.LoadAssetAtPath<StyleSheet>($"{GoapEditorSettings.BasePath}/Styles/GraphViewer.uss");
             this.rootVisualElement.styleSheets.Add(styleSheet);
 
             var bezierRoot = new VisualElement();
@@ -157,10 +168,7 @@ namespace CrashKonijn.Goap.Editor
 #endif
             });
 
-            dragRoot.RegisterCallback<WheelEvent>((evt) =>
-            {
-                this.values.UpdateZoom(2 * (int) -evt.delta.y);
-            });
+            dragRoot.RegisterCallback<WheelEvent>((evt) => { this.values.UpdateZoom(2 * (int)-evt.delta.y); });
 
             foreach (var rootNode in graph.RootNodes)
             {
@@ -181,6 +189,7 @@ namespace CrashKonijn.Goap.Editor
             }).Every(33);
         }
 
+// 在父元素中创建节点
         private void CreateNode(VisualElement parent, VisualElement bezierRoot, INode graphNode)
         {
             var node = new NodeElement(graphNode, bezierRoot, this.values);

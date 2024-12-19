@@ -35,6 +35,10 @@ namespace CrashKonijn.Goap.Demos.Complex.Behaviours
             this.provider.Events.OnActionEnd -= this.OnActionEnd;
             this.provider.Events.OnNoActionFound -= this.OnNoActionFound;
             this.provider.Events.OnGoalCompleted -= this.OnGoalCompleted;
+            if (this.provider == null)
+            {
+                Debug.Log("provider== null");
+            }
         }
 
         private void Start()
@@ -49,6 +53,7 @@ namespace CrashKonijn.Goap.Demos.Complex.Behaviours
 
         private void OnGoalCompleted(IGoal goal)
         {
+           
             this.provider.RequestGoal<WanderGoal>(true);
         }
 
@@ -134,17 +139,17 @@ namespace CrashKonijn.Goap.Demos.Complex.Behaviours
         {
             if (this.itemCollection.Get<Axe>().Length <= 1)
             {
-                this.provider.RequestGoal<CreateItemGoal<Axe>>(true);
+                this.provider.RequestGoal<CreateItemGoal<Axe>>(false);
                 return;
             }
             
             if (this.itemCollection.Get<Pickaxe>().Length <= 1)
             {
-                this.provider.RequestGoal<CreateItemGoal<Pickaxe>>(true);
+                this.provider.RequestGoal<CreateItemGoal<Pickaxe>>(false);
                 return;
             }
 
-            this.provider.RequestGoal<WanderGoal>(false);
+            this.provider.RequestGoal<WanderGoal>(true);
         }
         
         private void DetermineCleanerGoals()
